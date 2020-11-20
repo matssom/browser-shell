@@ -5,4 +5,4 @@ export const commands = {
             return state;
         }
     }
-}
+};
