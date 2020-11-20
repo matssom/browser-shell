@@ -19,7 +19,7 @@
 /*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _src_cli__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../src/cli */ \"./src/cli.js\");\n\r\n\r\nconst snakegame = () => {\r\n    console.log('started snake game');\r\n}\r\n\r\nconst cli = (0,_src_cli__WEBPACK_IMPORTED_MODULE_0__.createCli)(\r\n    {\r\n        'games' : {\r\n            'snake.exe' : snakegame\r\n        },\r\n        'about.txt' : 'Hi there,\\nMy name is Mats Sommervold'\r\n    },\r\n    document.querySelector('#cli-root')\r\n);\n\n//# sourceURL=webpack://simple-cli/./example/src/app.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _src_cli__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../src/cli */ \"./src/cli.js\");\n\r\n\r\nconst snakegame = () => {\r\n    console.log('started snake game');\r\n}\r\n\r\nconst cli = (0,_src_cli__WEBPACK_IMPORTED_MODULE_0__.createCli)(\r\n    {\r\n        'games' : {\r\n            'snake.exe' : snakegame\r\n        },\r\n        'about.txt' : 'Hi there,\\nMy name is Mats Sommervold'\r\n    },\r\n    document.querySelector('#cli-root')\r\n);\r\n\r\ncli('help')\n\n//# sourceURL=webpack://simple-cli/./example/src/app.js?");
 
 /***/ }),
 
@@ -33,7 +33,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _src
 /*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"createCli\": () => /* binding */ createCli\n/* harmony export */ });\n/* harmony import */ var _commands__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./commands */ \"./src/commands.js\");\n\r\n\r\nconst state = {\r\n    fs: {},\r\n    path: ['root'],\r\n    root: '',\r\n    output: [\r\n        {}\r\n    ]\r\n}\r\n\r\nconst interact = (command) => {\r\n    state = _commands__WEBPACK_IMPORTED_MODULE_0__.commands[command](state);\r\n    return state;\r\n}\r\n\r\nconst createCli = (structure, root) => {\r\n    state.fs = typeof structure == 'object' ? structure : state.fs;\r\n    if(root instanceof Element) state.root = root;\r\n    else throw new Error('No root element provided');\r\n    return interact;\r\n}\n\n//# sourceURL=webpack://simple-cli/./src/cli.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"createCli\": () => /* binding */ createCli\n/* harmony export */ });\n/* harmony import */ var _commands_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./commands.js */ \"./src/commands.js\");\n\r\n\r\nlet state = {\r\n    fs: {},\r\n    path: ['root'],\r\n    root: '',\r\n    commands: _commands_js__WEBPACK_IMPORTED_MODULE_0__.commands,\r\n    output: [\r\n        \r\n    ]\r\n}\r\n\r\nconst interact = (command) => {\r\n    const splitCommand = command.split(' ');\r\n\r\n    state.commands[splitCommand[0]].action(state, splitCommand.shift());\r\n    return state;\r\n}\r\n\r\nconst createCli = (structure, root) => {\r\n    state.fs = typeof structure == 'object' ? structure : state.fs;\r\n    if(root instanceof Element) state.root = root;\r\n    else throw new Error('No root element provided');\r\n    return interact;\r\n}\n\n//# sourceURL=webpack://simple-cli/./src/cli.js?");
 
 /***/ }),
 
@@ -44,10 +44,24 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /*! namespace exports */
 /*! export commands [provided] [no usage info] [missing usage info prevents renaming] */
 /*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"commands\": () => /* binding */ commands\n/* harmony export */ });\nconst commands = {\r\n    help: {\r\n        desc: 'Lists all available commands and their use',\r\n        action: (state) => {\r\n            return state;\r\n        }\r\n    }\r\n}\n\n//# sourceURL=webpack://simple-cli/./src/commands.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"commands\": () => /* binding */ commands\n/* harmony export */ });\n/* harmony import */ var _io_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./io.js */ \"./src/io.js\");\n\r\n\r\nconst commands = {\r\n    help: {\r\n        desc: 'lists all available commands and their use',\r\n        action: (state, command) => {\r\n            Object.keys(state.commands).forEach(key => {\r\n                state = _io_js__WEBPACK_IMPORTED_MODULE_0__.default.createElement(state, `\\`${key}\\` - ${state.commands[key].desc}`);\r\n            })\r\n            state = _io_js__WEBPACK_IMPORTED_MODULE_0__.default.createInput(state);\r\n            return state;\r\n        }\r\n    },\r\n    echo: {\r\n        desc: 'prints something to the terminal',\r\n        action: (state, command) => {\r\n            \r\n        }\r\n    }\r\n};\n\n//# sourceURL=webpack://simple-cli/./src/commands.js?");
+
+/***/ }),
+
+/***/ "./src/io.js":
+/*!*******************!*\
+  !*** ./src/io.js ***!
+  \*******************/
+/*! namespace exports */
+/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_exports__, __webpack_require__.r, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => __WEBPACK_DEFAULT_EXPORT__\n/* harmony export */ });\nconst io = {\r\n    render: (state) => {\r\n        state.root.innerHTML = '';\r\n        for (let e of state.output) {\r\n            state.root.appendChild(e);\r\n        }\r\n        return state;\r\n    },\r\n    createElement: (state, string) => {\r\n        const e = document.createElement('p');\r\n        e.innerHTML = string;\r\n        state.output.push(e);\r\n        return io.render(state);\r\n    },\r\n    createInput: state => {\r\n        const div = document.createElement('div');\r\n        div.style.display = 'grid';\r\n        div.style.gridTemplateColumns = 'max-content 1fr';\r\n        const e = document.createElement('p');\r\n        const j = document.createElement('p');\r\n        \r\n        e.innerHTML = `${state.path[state.path.length - 1]} > `;\r\n        j.contentEditable = true;\r\n\r\n        div.appendChild(e);\r\n        div.appendChild(j);\r\n\r\n        state.output.push(div);\r\n        return io.render(state);\r\n    }\r\n};\r\n\r\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (io);\n\n//# sourceURL=webpack://simple-cli/./src/io.js?");
 
 /***/ })
 

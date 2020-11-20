@@ -13,3 +13,5 @@ const cli = createCli(
     },
     document.querySelector('#cli-root')
 );
+
+cli('help')

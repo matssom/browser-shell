@@ -7,7 +7,7 @@
     "example": "example"
   },
   "scripts": {
-    "dev": "webpack"
+    "example": "webpack"
   },
   "keywords": [
     "cli"

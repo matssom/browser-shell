@@ -1,16 +1,19 @@
 import { commands } from './commands.js';
 
-const state = {
+let state = {
     fs: {},
     path: ['root'],
     root: '',
+    commands,
     output: [
-        {}
+        
     ]
 }
 
 const interact = (command) => {
-    state = commands[command](state);
+    const splitCommand = command.split(' ');
+
+    state.commands[splitCommand[0]].action(state, splitCommand.shift());
     return state;
 }
 
