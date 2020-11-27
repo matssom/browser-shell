@@ -16,5 +16,12 @@ export const commands = {
         action: (state, command) => {
             
         }
+    },
+    default: {
+        desc: 'runs if no matching command is found',
+        action: (state, command) => {
+            state = io.createElement(state, `\`${command}\` is not recognised as a valid command`);
+            return io.createInput(state);
+        }
     }
 };
