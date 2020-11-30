@@ -1,7 +1,7 @@
 {
-  "name": "simple-cli",
-  "version": "1.0.0",
-  "description": "A simple, fun cli for your browser",
+  "name": "browser-shell",
+  "version": "0.0.1-alpha",
+  "description": "A framework shell framework for creating your own cli in the browser",
   "main": "index.js",
   "scripts": {
     "dev": "tsc-watch",
@@ -25,5 +25,9 @@
   },
   "dependencies": {
     "storable-state": "^2.0.1"
-  }
+  },
+  "files": [
+    "/dist",
+    "index.js"
+  ]
 }
