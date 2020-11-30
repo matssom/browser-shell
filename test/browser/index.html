@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple Cli - test</title>
-    <link rel="stylesheet" href="../node_modules/mocha/mocha.css">
+    <link rel="stylesheet" href="../../node_modules/mocha/mocha.css">
     
 </head>
 <body>
     <div id="mocha"></div>
 
-    <script src="../node_modules/chai/chai.js"></script>
-    <script src="../node_modules/mocha/mocha.js"></script>
+    <script src="../../node_modules/chai/chai.js"></script>
+    <script src="../../node_modules/mocha/mocha.js"></script>
     <script>mocha.setup('bdd')</script>
     
     <div id="cli-root"></div>
 
-    <script type="module" src="cli.test.js"></script>
+    <script src="browser.test.js"></script>
 
     <script type="module">
         mocha.checkLeaks();

@@ -3,11 +3,9 @@
   "version": "1.0.0",
   "description": "A simple, fun cli for your browser",
   "main": "index.js",
-  "directories": {
-    "example": "example"
-  },
   "scripts": {
-    "example": "webpack"
+    "dev": "tsc-watch",
+    "btest": "concurrently \"tsc-watch\" \"webpack --config browserTest.config.js\""
   },
   "keywords": [
     "cli"
@@ -15,8 +13,17 @@
   "author": "Mats Sommervold",
   "license": "MIT",
   "devDependencies": {
+    "concurrently": "^5.3.0",
+    "esm": "^3.2.25",
+    "live-server": "^1.2.1",
     "mocha": "^8.2.1",
+    "tsc-watch": "^4.2.9",
+    "typescript": "^4.1.2",
     "webpack": "^5.6.0",
-    "webpack-cli": "^4.2.0"
+    "webpack-cli": "^4.2.0",
+    "chai": "^4.2.0"
+  },
+  "dependencies": {
+    "storable-state": "^2.0.1"
   }
 }
