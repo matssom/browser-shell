@@ -1,6 +1,6 @@
 {
   "name": "browser-shell",
-  "version": "0.0.1-alpha",
+  "version": "0.0.1-pre-alpha",
   "description": "A framework shell framework for creating your own cli in the browser",
   "main": "index.js",
   "scripts": {
