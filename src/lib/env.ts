@@ -1,8 +1,8 @@
-import { storable } from 'storable-state';
+import { storable } from 'storable-state'
 
 class env {
     private static _instance: env
-    public static store = storable('env');
+    public static store = storable('env')
     public user : string = 'system'
     public group : string = 'system'
 
