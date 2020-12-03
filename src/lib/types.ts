@@ -9,15 +9,16 @@ export type File = {
     inode: Id
 }
 
+export type FileData = {
+    file: File,
+    inode: Inode,
+    data: string
+}
+
 export type Fs = {
     inodes: Map<Id, Inode>,
     files: Map<Id, File>,
     data: Map<Id, string>
-}
-
-export type Activity = {
-    user: string,
-    group: string
 }
 
 export type Perm = {
