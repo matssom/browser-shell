@@ -1,4 +1,3 @@
-import { idText } from 'typescript';
 import { createFileSystem } from '../../../dist/lib/store.js';
 
 let expect = chai.expect;

@@ -4,10 +4,12 @@
       "moduleResolution": "node",
       "target": "ES2015",
       "sourceMap": false,
+      "declaration": true,
       "outDir": "./dist"
     },
     "exclude": [
-      "node_modules"
+      "node_modules",
+      "test"
     ],
     "include": [
       "./src"
