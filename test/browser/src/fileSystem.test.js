@@ -32,7 +32,7 @@ const test = () => {
                 expect(fs.readFile('root')).to.equal('test data')
             })
 
-            it('throws exeption if user does not have permission', () => {
+            it('throws exeption if user does not have write permission', () => {
                 env.user = 'admin'
 
                 expect(
@@ -43,6 +43,32 @@ const test = () => {
                     }
                 ).to.throw('Permission denied')
             })
+
+            // Write mock file
+            const data = 'This is some cool file data stuff'
+            const perm = {
+                user : 'rwx',
+                group : 'r-x',
+                other : '-w-'
+            }
+
+            env.user = 'system'
+            env.group = 'admin'
+            const fileId = fs.writeFile('testFile', 'root', '-', perm, data)
+
+            it('leaves callback parameter as null if the user does not have read access', () => {
+                env.user = 'someone'
+                env.group = 'user'
+
+                let previousData
+
+                fs.updateFile(fileId, data => {
+                    previousData = data
+                    return 'test data'
+                })
+
+                expect(previousData).to.be.null
+            })
         })
         describe('writeFile()', () => {
             const data = 'This is some cool file data stuff'
@@ -52,8 +78,15 @@ const test = () => {
                 other : '---'
 
             }
+
+            env.user = 'system'
+            env.group = 'admin'
+
             const fileId = fs.writeFile('coolfile', 'root', '-', perm, data)
             it('saves data', () => {
+
+                env.user = 'system'
+                env.group = 'admin'
                 expect(fs.readFile(fileId)).to.equal(data)
             })
 

@@ -4,7 +4,7 @@ class env {
     private static _instance: env
     public static store = storable('env')
     public user : string = 'system'
-    public group : string = 'system'
+    public group : string = 'admin'
 
     private constructor() {
 

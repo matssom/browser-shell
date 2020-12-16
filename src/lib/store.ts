@@ -52,7 +52,9 @@ export const createFileSystem = (data : Fs = defaultData, key : string = 'fs') =
 
         if (!hasPermission(fileData.inode, 'w')) throw new Error("Permission denied")
 
-        const updatedData = callback(fileData.data)
+        const data = hasPermission(fileData.inode, 'r') ? fileData.data : null
+
+        const updatedData = callback(data)
 
         update(state => {
             const newState = { ...state }
@@ -67,8 +69,10 @@ export const createFileSystem = (data : Fs = defaultData, key : string = 'fs') =
     }
 
     const readFile = (fileId: Id) => {
-        const { data } = getFileById(fileId)
-        return data
+        const fileData = getFileById(fileId)
+        if (!hasPermission(fileData.inode, 'r')) throw new Error("Permission denied")
+
+        return fileData.data
     }
 
     const writeFile = (name: string, parrentId: Id, type: Type, permission : Perm, data: string) => {
@@ -76,6 +80,7 @@ export const createFileSystem = (data : Fs = defaultData, key : string = 'fs') =
         validateArgs(args, 'is a required field')
         const parrent = readMetadata(parrentId)
         if (!isDirectory(parrent.inode)) throw new Error('Parrent of file must be a directory')
+        if (!hasPermission(parrent.inode, 'w')) throw new Error("Permission denied")
 
         const address = createId()
         const inodeId = createId()
