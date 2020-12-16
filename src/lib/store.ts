@@ -68,7 +68,7 @@ export const createFileSystem = (data : Fs = defaultData, key : string = 'fs') =
         return data
     }
 
-    const createFile = (name: string, parrentId: Id, type: Type, permission : Perm, data: string) => {
+    const writeFile = (name: string, parrentId: Id, type: Type, permission : Perm, data: string) => {
         const args = { name, parrentId, type, permission, data }
         validateArgs(args, 'is a required field')
         const parrent = readMetadata(parrentId)
@@ -106,7 +106,7 @@ export const createFileSystem = (data : Fs = defaultData, key : string = 'fs') =
 
     return {
         subscribe,
-        createFile,
+        writeFile,
         updateFile,
         readFile,
         readMetadata

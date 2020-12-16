@@ -37,7 +37,7 @@ const test = () => {
                 other : '---'
 
             }
-            const fileId = fs.createFile('coolfile', 'root', '-', perm, data)
+            const fileId = fs.writeFile('coolfile', 'root', '-', perm, data)
             it('saves data', () => {
                 expect(fs.readFile(fileId)).to.equal(data)
             })
