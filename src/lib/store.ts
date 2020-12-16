@@ -1,6 +1,6 @@
 import { serializable } from 'storable-state'
 import { File, Inode, Fs, Perm, Type, Id, FileData } from './types.js'
-import { createId, validateArgs } from './helpers.js'
+import { createId, validateArgs, hasPermission } from './helpers.js'
 import env from './env';
 
 const rootInode: Inode = {
@@ -49,6 +49,9 @@ export const createFileSystem = (data : Fs = defaultData, key : string = 'fs') =
         validateArgs(args, 'is a required field')
 
         const fileData = getFileById(fileId)
+
+        if (!hasPermission(fileData.inode, 'w')) throw new Error("Permission denied")
+
         const updatedData = callback(fileData.data)
 
         update(state => {

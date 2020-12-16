@@ -1,6 +1,7 @@
-import { createFileSystem } from '../../../dist/lib/store.js';
+import { createFileSystem } from '../../../dist/lib/store.js'
+import env from '../../../dist/lib/env'
 
-let expect = chai.expect;
+let expect = chai.expect
 localStorage.removeItem('fs')
 
 const test = () => {
@@ -23,10 +24,24 @@ const test = () => {
         })
         describe('updateFile()', () => {
             it('updates content of file in system', () => {
+                env.user = 'system'
+
                 fs.updateFile('root', data => {
                     return 'test data'
                 })
                 expect(fs.readFile('root')).to.equal('test data')
+            })
+
+            it('throws exeption if user does not have permission', () => {
+                env.user = 'admin'
+
+                expect(
+                    () => {
+                        fs.updateFile('root', data => {
+                            return 'test data'
+                        })
+                    }
+                ).to.throw('Permission denied')
             })
         })
         describe('writeFile()', () => {
