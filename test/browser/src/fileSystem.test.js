@@ -23,13 +23,25 @@ const test = () => {
             })
         })
         describe('updateFile()', () => {
+            // Write mock file
+            const data = 'This is some cool file data stuff'
+            const perm = {
+                user : 'rwx',
+                group : 'r-x',
+                other : '-w-'
+            }
+
+            env.user = 'system'
+            env.group = 'admin'
+            const fileId = fs.writeFile('testFile', 'root', '-', perm, data)
+
             it('updates content of file in system', () => {
                 env.user = 'system'
 
-                fs.updateFile('root', data => {
-                    return 'test data'
+                fs.updateFile(fileId, data => {
+                    return 'test data 1'
                 })
-                expect(fs.readFile('root')).to.equal('test data')
+                expect(fs.readFile(fileId)).to.equal('test data 1')
             })
 
             it('throws exeption if user does not have write permission', () => {
@@ -43,18 +55,6 @@ const test = () => {
                     }
                 ).to.throw('Permission denied')
             })
-
-            // Write mock file
-            const data = 'This is some cool file data stuff'
-            const perm = {
-                user : 'rwx',
-                group : 'r-x',
-                other : '-w-'
-            }
-
-            env.user = 'system'
-            env.group = 'admin'
-            const fileId = fs.writeFile('testFile', 'root', '-', perm, data)
 
             it('leaves callback parameter as null if the user does not have read access', () => {
                 env.user = 'someone'
@@ -101,6 +101,48 @@ const test = () => {
             it('user and group are strings', () => {
                 expect(metadata.inode.user).to.be.a('string')
                 expect(metadata.inode.group).to.be.a('string')
+            })
+        })
+
+        describe('deleteFile()', () => {
+            it('deletes file and data', () => {
+                const data = 'This file is created to be deleted'
+                const perm = {
+                    user : 'rwx',
+                    group : 'rwx',
+                    other : 'rwx'
+
+                }
+
+                const fileId = fs.writeFile('fileToDelete', 'root', '-', perm, data)
+                expect(fs.readFile(fileId)).to.equal('This file is created to be deleted')
+
+                fs.deleteFile('fileToDelete', 'root')
+                expect(() => fs.readFile(fileId)).to.throw('File does not exist')
+            })
+
+            it('throws error if file does not exist', () => {
+                expect(() => fs.deleteFile('fileToDelete', 'root').to.throw('File does not exist'))
+            })
+
+            it('throws error if directory does not exist', () => {
+                expect(() => fs.deleteFile('fileToDelete', 'somefolder').to.throw('Directory does not exist'))
+            })
+
+            it('throws error if user does not have permission', () => {
+                const data = 'This file is created to be deleted'
+                const perm = {
+                    user : '---',
+                    group : '---',
+                    other : '---'
+
+                }
+
+                const fileId = fs.writeFile('fileToDelete', 'root', '-', perm, data)
+
+                env.user = 'someone'
+
+                expect(() => fs.deleteFile('fileToDelete', 'root').to.throw('Permission denied'))
             })
         })
     })

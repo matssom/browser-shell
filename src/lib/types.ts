@@ -15,6 +15,11 @@ export type FileData = {
     data: string
 }
 
+export type Metadata = {
+    file: File,
+    inode: Inode
+}
+
 export type Fs = {
     inodes: Map<Id, Inode>,
     files: Map<Id, File>,
