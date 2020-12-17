@@ -71,18 +71,17 @@ const test = () => {
             })
         })
         describe('writeFile()', () => {
-            const data = 'This is some cool file data stuff'
+            const data = 'This is some file data'
             const perm = {
                 user : 'rwx',
                 group : 'r-x',
                 other : '---'
-
             }
 
             env.user = 'system'
             env.group = 'admin'
 
-            const fileId = fs.writeFile('coolfile', 'root', '-', perm, data)
+            const fileId = fs.writeFile('newFile', 'root', '-', perm, data)
             it('saves data', () => {
 
                 env.user = 'system'
@@ -96,16 +95,33 @@ const test = () => {
                 expect(metadata.file.links[0]).to.equal('root')
             })
             it('has correct name', () => {
-                expect(metadata.file.name).to.equal('coolfile')
+                expect(metadata.file.name).to.equal('newFile')
             })
             it('user and group are strings', () => {
                 expect(metadata.inode.user).to.be.a('string')
                 expect(metadata.inode.group).to.be.a('string')
             })
+            it('throws error if user does not have write permission in directory', () => {
+                env.user = 'system'
+
+                const data = 'This data will not be saved'
+                const perm = {
+                    user : 'rwx',
+                    group : '---',
+                    other : '---'
+                }
+
+                const dirId = fs.writeFile('noPermissionDirectory', 'root', 'd', perm, '')
+
+                env.user = 'someone'
+                expect(() => fs.writeFile('uncreatableFile', dirId, '-', perm, data)).to.throw('Permission denied')
+            })
         })
 
         describe('deleteFile()', () => {
             it('deletes file and data', () => {
+                env.user = 'system'
+
                 const data = 'This file is created to be deleted'
                 const perm = {
                     user : 'rwx',
@@ -130,6 +146,8 @@ const test = () => {
             })
 
             it('throws error if user does not have permission', () => {
+                env.user = 'system'
+
                 const data = 'This file is created to be deleted'
                 const perm = {
                     user : '---',

@@ -79,8 +79,10 @@ export const createFileSystem = (data : Fs = defaultData, key : string = 'fs') =
     }
 
     const writeFile = (name: string, parrentId: Id, type: Type, permission : Perm, data: string) => {
-        const args = { name, parrentId, type, permission, data }
+        const args = { name, parrentId, type, permission }
         validateArgs(args, 'is a required field')
+        data = type === '-' ? data === undefined ? '' : data : ''
+        
         const parrent = readMetadata(parrentId)
         if (!isDirectory(parrent.inode)) throw new Error('Parrent of file must be a directory')
         if (!hasPermission(parrent.inode, 'w')) throw new Error("Permission denied")
