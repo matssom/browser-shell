@@ -23,6 +23,12 @@ const test = () => {
                 ).to.eql(process.fs.readMetadata(path4))
             })
         })
+
+        describe('path.absolute()', () => {
+            it('returns an absolute representation of a relative path', () => {
+                expect(path.absolute('./path1')).to.equal('~/path1')
+            })
+        })
     })
 }
 

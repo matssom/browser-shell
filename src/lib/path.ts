@@ -2,7 +2,7 @@ import process from './process.js'
 import { Id, FileData, Metadata } from './types.js'
 
 const parsePath = (path: string) => {
-    let splitPath = path.split('/').filter(e => e.length > 0)
+    let splitPath = pathToArray(path)
 
     //check that path length is not 0
 
@@ -19,6 +19,10 @@ const parsePath = (path: string) => {
 
 const pathToArray = (path: string):Array<string> => {
     return path.split('/').filter(e => e.length > 0)
+}
+
+const arrayToPath = (array: Array<string>):string => {
+    return array.join('/')
 }
 
 const getParrentPath = (path: Array<string>): Array<string> => {
@@ -75,6 +79,18 @@ const nextFile = (dirId: Id, name: string):Id => {
     return fileId
 }
 
+const relativeToAbsolute = (relative: string):string => {
+
+    let absolutePath = []
+
+    for (let path of pathToArray(relative)) {
+        absolutePath = next(absolutePath, path)
+    }
+
+    return arrayToPath(absolutePath)
+}
+
 export default {
-    parse: (path: string):Metadata => parsePath(path)
+    parse: (path: string):Metadata => parsePath(path),
+    absolute: (path: string):string => relativeToAbsolute(path)
 }
