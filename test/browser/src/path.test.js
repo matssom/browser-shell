@@ -5,7 +5,7 @@ let expect = chai.expect;
 
 const test = () => {
     describe('Path', () => {
-        describe('path.parse()', () => {
+        describe('path.get()', () => {
             const perm = {
                 user : 'rwx',
                 group : 'rwx',
@@ -19,14 +19,26 @@ const test = () => {
 
             it('finds file from relative and absolute path', () => {
                 expect(
-                    path.parse('path/~/path/./path2/../path3/path4/.')
+                    path.get('path/~/path/./path2/../path3/path4/.')
                 ).to.eql(process.fs.readMetadata(path4))
             })
         })
 
-        describe('path.absolute()', () => {
+        describe('path.parse()', () => {
             it('returns an absolute representation of a relative path', () => {
-                expect(path.absolute('./path1')).to.equal('~/path1')
+                expect(path.parse('./path1')).to.equal('~/path1')
+            })
+        })
+
+        describe('path.join()', () => {
+            it('joins two relative paths', () => {
+                expect(path.join('./path','../')).to.equal('~')
+            })
+            it('joins an absolute path with a relative path', () => {
+                expect(path.join('~', '../path')).to.equal('~/path')
+            })
+            it('throws error if second parameter is an absolute path', () => {
+                expect(() => path.join('~', '~')).to.throw('Second parameter cannot be an absolute path')
             })
         })
     })

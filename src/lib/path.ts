@@ -1,22 +1,6 @@
 import process from './process.js'
 import { Id, FileData, Metadata } from './types.js'
 
-const parsePath = (path: string) => {
-    let splitPath = pathToArray(path)
-
-    //check that path length is not 0
-
-    let absolutePath = []
-
-    for (let path of splitPath) {
-        absolutePath = next(absolutePath, path)
-    }
-
-    const file = getFile(absolutePath)
-
-    return file
-}
-
 const pathToArray = (path: string):Array<string> => {
     return path.split('/').filter(e => e.length > 0)
 }
@@ -31,7 +15,7 @@ const getParrentPath = (path: Array<string>): Array<string> => {
     else return path.slice(0, -1)
 }
 
-const next = (path: Array<string>, next: string) => {
+const next = (path: Array<string>, next: string, cwd: string) => {
     let newPath = [...path]
 
     switch(next) {
@@ -39,14 +23,14 @@ const next = (path: Array<string>, next: string) => {
             newPath = ['~']
             break
         case '.':
-            if (newPath.length === 0) newPath = pathToArray(process.env.path)
+            if (newPath.length === 0) newPath = pathToArray(cwd)
             break
         case '..':
-            if (newPath.length === 0) newPath = getParrentPath(pathToArray(process.env.path))
+            if (newPath.length === 0) newPath = getParrentPath(pathToArray(cwd))
             else if (newPath.length !== 1) newPath.pop()
             break
         default:
-            if (newPath.length === 0) newPath = [...pathToArray(process.env.path), next]
+            if (newPath.length === 0) newPath = [...pathToArray(cwd), next]
             else newPath.push(next)
     }
 
@@ -79,18 +63,29 @@ const nextFile = (dirId: Id, name: string):Id => {
     return fileId
 }
 
-const relativeToAbsolute = (relative: string):string => {
-
+const relativeToAbsolute = (relative: string, cwd?: string, array?: boolean):any => {
+    cwd = cwd ? cwd : process.env.path
     let absolutePath = []
 
     for (let path of pathToArray(relative)) {
-        absolutePath = next(absolutePath, path)
+        absolutePath = next(absolutePath, path, cwd)
     }
 
-    return arrayToPath(absolutePath)
+    if (array) return absolutePath
+    else return arrayToPath(absolutePath)
+}
+
+const isAbsolute = (path: string): boolean => pathToArray(path)[0] === '~'
+
+const join = (first: string, second:string):string => {
+    if (isAbsolute(second)) throw new Error('Second parameter cannot be an absolute path')
+    
+    const absolute = relativeToAbsolute(first)
+    return relativeToAbsolute(second, absolute)
 }
 
 export default {
-    parse: (path: string):Metadata => parsePath(path),
-    absolute: (path: string):string => relativeToAbsolute(path)
+    get: (path: string, cwd?: string):Metadata => getFile(relativeToAbsolute(path, cwd, true)),
+    parse: (path: string, cwd?: string):string => relativeToAbsolute(path, cwd),
+    join: (first: string, second: string):string => join(first, second)
 }
