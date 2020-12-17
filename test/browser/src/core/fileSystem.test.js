@@ -1,14 +1,13 @@
-import { createFileSystem } from '../../../dist/lib/filesystem.js'
-import env from '../../../dist/lib/env.js'
+import process from '../../../../dist/core/process.js'
+import { createFileSystem } from '../../../../dist/core/filesystem.js'
 
 let expect = chai.expect
-localStorage.removeItem('fs')
+let fs = process.fs
 
 const test = () => {
     describe('File System', () => {
-        const fs = createFileSystem()
-
         describe('createFileSystem()', () => {
+            const fs = createFileSystem()
             it('returns a file system', () => {
                 expect(fs).to.be.an('object')
             })
@@ -31,12 +30,12 @@ const test = () => {
                 other : '-w-'
             }
 
-            env.user = 'system'
-            env.group = 'admin'
+            process.env.user = 'system'
+            process.env.group = 'admin'
             const fileId = fs.writeFile('testFile', 'root', '-', perm, data)
 
             it('updates content of file in system', () => {
-                env.user = 'system'
+                process.env.user = 'system'
 
                 fs.updateFile(fileId, data => {
                     return 'test data 1'
@@ -45,11 +44,11 @@ const test = () => {
             })
 
             it('throws exeption if user does not have write permission', () => {
-                env.user = 'admin'
+                process.env.user = 'someone'
 
                 expect(
                     () => {
-                        fs.updateFile('root', data => {
+                        fs.updateFile(fileId, data => {
                             return 'test data'
                         })
                     }
@@ -57,8 +56,8 @@ const test = () => {
             })
 
             it('leaves callback parameter as null if the user does not have read access', () => {
-                env.user = 'someone'
-                env.group = 'user'
+                process.env.user = 'someone'
+                process.env.group = 'user'
 
                 let previousData
 
@@ -78,14 +77,14 @@ const test = () => {
                 other : '---'
             }
 
-            env.user = 'system'
-            env.group = 'admin'
+            process.env.user = 'system'
+            process.env.group = 'admin'
 
             const fileId = fs.writeFile('newFile', 'root', '-', perm, data)
             it('saves data', () => {
 
-                env.user = 'system'
-                env.group = 'admin'
+                process.env.user = 'system'
+                process.env.group = 'admin'
                 expect(fs.readFile(fileId)).to.equal(data)
             })
 
@@ -102,7 +101,7 @@ const test = () => {
                 expect(metadata.inode.group).to.be.a('string')
             })
             it('throws error if user does not have write permission in directory', () => {
-                env.user = 'system'
+                process.env.user = 'system'
 
                 const data = 'This data will not be saved'
                 const perm = {
@@ -113,14 +112,14 @@ const test = () => {
 
                 const dirId = fs.writeFile('noPermissionDirectory', 'root', 'd', perm, '')
 
-                env.user = 'someone'
+                process.env.user = 'someone'
                 expect(() => fs.writeFile('uncreatableFile', dirId, '-', perm, data)).to.throw('Permission denied')
             })
         })
 
         describe('deleteFile()', () => {
             it('deletes file and data', () => {
-                env.user = 'system'
+                process.env.user = 'system'
 
                 const data = 'This file is created to be deleted'
                 const perm = {
@@ -133,7 +132,7 @@ const test = () => {
                 const fileId = fs.writeFile('fileToDelete', 'root', '-', perm, data)
                 expect(fs.readFile(fileId)).to.equal('This file is created to be deleted')
 
-                fs.deleteFile('fileToDelete', 'root')
+                fs.deleteFile('fileToDelete', 'root')   
                 expect(() => fs.readFile(fileId)).to.throw('File does not exist')
             })
 
@@ -146,7 +145,7 @@ const test = () => {
             })
 
             it('throws error if user does not have permission', () => {
-                env.user = 'system'
+                process.env.user = 'system'
 
                 const data = 'This file is created to be deleted'
                 const perm = {
@@ -158,7 +157,7 @@ const test = () => {
 
                 const fileId = fs.writeFile('fileToDelete', 'root', '-', perm, data)
 
-                env.user = 'someone'
+                process.env.user = 'someone'
 
                 expect(() => fs.deleteFile('fileToDelete', 'root').to.throw('Permission denied'))
             })

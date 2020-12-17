@@ -1,11 +1,11 @@
 import { serializable } from 'storable-state'
-import { File, Inode, Fs, Perm, Type, Id, FileData, Metadata, FileSystem } from './types.js'
-import { createId, validateArgs, hasPermission } from './helpers.js'
-import env from './env';
+import { File, Inode, Fs, Perm, Type, Id, FileData, Metadata, FileSystem } from '../lib/types.js'
+import { createId, validateArgs, hasPermission } from '../lib/helpers.js'
+import process from './process.js'
 
 const rootInode: Inode = {
     type: 'd',
-    permission: 'r-xr-xr-x',
+    permission: 'rwxrwxrwx',
     modified: new Date,
     user: 'system',
     group: 'admin',
@@ -97,8 +97,8 @@ export const createFileSystem = (data : Fs = defaultData, key : string = 'fs'): 
                 type,
                 permission: permString,
                 modified: new Date(),
-                user: env.user,
-                group: env.group,
+                user: process.env.user,
+                group: process.env.group,
                 links: [fileId],
                 size: (new Blob([data])).size,
                 address: address
@@ -173,7 +173,6 @@ export const createFileSystem = (data : Fs = defaultData, key : string = 'fs'): 
         const dir: Map<string, Id> = new Map()
 
         let fileIds = parseDirectory(readFile(dirId))
-        let fileNames
 
         for (let fileId of fileIds) {
             const name = readMetadata(fileId).file.name
@@ -251,6 +250,7 @@ export const createFileSystem = (data : Fs = defaultData, key : string = 'fs'): 
         const fileToDelete = readMetadata(fileIdToDelete)
 
         if (!fileIdToDelete) throw new Error('File does not exist')
+        if (fileIdToDelete === 'root') throw new Error('Permission denied')
 
         if (fileToDelete.file.links.length > 1) {
             removeFileFromDirectory(fileIdToDelete, parrentId)
@@ -262,6 +262,8 @@ export const createFileSystem = (data : Fs = defaultData, key : string = 'fs'): 
                 removeData(fileToDelete.file.inode)
             }
         }
+
+        return true
     }
 
     return {

@@ -1,4 +1,4 @@
-import env from '../../../dist/lib/env.js';
+import env from '../../../../dist/core/env.js';
 
 let expect = chai.expect;
 

@@ -1,5 +1,5 @@
-import { Id, Inode } from './types'
-import env from './env'
+import { Id, Inode } from './types.js'
+import process from '../core/process.js'
 
 export const createId = () => {
     const id: Id = [...Array(20)].map(i=>(~~(Math.random()*36)).toString(36)).join('')
@@ -13,12 +13,12 @@ export const validateArgs = (args : Object, message : string) => {
 }
 
 export const hasPermission = (inode: Inode, action: 'r' | 'w' | 'x') => {
-    if (env.user === 'system') return true
+    if (process.env.user === 'system') return true
 
     const owner = inode.user
     const ownerGroup = inode.group
 
-    const accessLevel = env.user === owner ? 'user' : env.group === ownerGroup ? 'group' : 'other';
+    const accessLevel = process.env.user === owner ? 'user' : process.env.group === ownerGroup ? 'group' : 'other';
     
     const permArray = [...inode.permission]
 

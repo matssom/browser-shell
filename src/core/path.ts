@@ -1,5 +1,5 @@
 import process from './process.js'
-import { Id, FileData, Metadata } from './types.js'
+import { Id, Metadata } from '../lib/types.js'
 
 const pathToArray = (path: string):Array<string> => {
     return path.split('/').filter(e => e.length > 0)
@@ -13,6 +13,11 @@ const getParrentPath = (path: Array<string>): Array<string> => {
     if (path.length === 0) throw new Error('Path is empty')
     else if (path.length === 1) return path
     else return path.slice(0, -1)
+}
+
+const getCurrentDir = (path: string):string => {
+    const splitPath = pathToArray(path)
+    return splitPath[splitPath.length - 1]
 }
 
 const next = (path: Array<string>, next: string, cwd: string) => {
@@ -86,6 +91,8 @@ const join = (first: string, second:string):string => {
 
 export default {
     get: (path: string, cwd?: string):Metadata => getFile(relativeToAbsolute(path, cwd, true)),
+    parrent: (path: string): string => arrayToPath(getParrentPath(relativeToAbsolute(path, process.env.path, true))),
+    current: (path: string): string => getCurrentDir(path),
     parse: (path: string, cwd?: string):string => relativeToAbsolute(path, cwd),
     join: (first: string, second: string):string => join(first, second)
 }
