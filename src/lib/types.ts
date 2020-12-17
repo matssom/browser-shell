@@ -5,6 +5,7 @@ export type PermGroup = '---'|'--x'|'-w-'|'-wx'|'r--'|'r-x'|'rw-'|'rwx'
 
 export type File = {
     name: string,
+    id: Id,
     links: Array<Id>,
     inode: Id
 }
@@ -41,4 +42,17 @@ export type Inode = {
     links: Array<Id>,
     size: number,
     address: Id
+}
+
+export type FileSystem = {
+    subscribe: () => void,
+    writeFile: (name: string, parrentId: Id, type: Type, permission: Perm, data: string) => string,
+    updateFile: (fileId: Id, callback: (data: string) => string) => void,
+    readFile: (fileId: Id) => string,
+    deleteFile: (name: string, parrentId: Id) => void,
+    readMetadata: (fileId: Id) => {
+        file: File;
+        inode: Inode;
+    },
+    listFiles: (dirId: Id) => Map<string, Id>
 }

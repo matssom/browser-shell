@@ -1,5 +1,5 @@
-import { createFileSystem } from '../../../dist/lib/store.js'
-import env from '../../../dist/lib/env'
+import { createFileSystem } from '../../../dist/lib/filesystem.js'
+import env from '../../../dist/lib/env.js'
 
 let expect = chai.expect
 localStorage.removeItem('fs')

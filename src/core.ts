@@ -1,3 +1,3 @@
-import { createFileSystem } from './lib/store.js';
+import { createFileSystem } from './lib/filesystem.js';
 
 export let fs

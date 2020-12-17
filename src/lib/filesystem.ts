@@ -1,5 +1,5 @@
 import { serializable } from 'storable-state'
-import { File, Inode, Fs, Perm, Type, Id, FileData, Metadata } from './types.js'
+import { File, Inode, Fs, Perm, Type, Id, FileData, Metadata, FileSystem } from './types.js'
 import { createId, validateArgs, hasPermission } from './helpers.js'
 import env from './env';
 
@@ -16,6 +16,7 @@ const rootInode: Inode = {
 
 const rootFile: File = {
     name: 'root',
+    id: 'root',
     links: undefined,
     inode: 'root'
 }
@@ -30,7 +31,7 @@ const isDirectory = (inode : Inode) => {
     return inode.type === 'd'
 }
 
-export const createFileSystem = (data : Fs = defaultData, key : string = 'fs') => {
+export const createFileSystem = (data : Fs = defaultData, key : string = 'fs'): FileSystem => {
     const { subscribe, set, update } = serializable(key, data);
 
     const getFileById = (fileId: Id):FileData => {
@@ -71,7 +72,7 @@ export const createFileSystem = (data : Fs = defaultData, key : string = 'fs') =
         return { file, inode }
     }
 
-    const readFile = (fileId: Id) => {
+    const readFile = (fileId: Id): string => {
         const fileData = getFileById(fileId)
         if (!hasPermission(fileData.inode, 'r')) throw new Error("Permission denied")
 
@@ -104,6 +105,7 @@ export const createFileSystem = (data : Fs = defaultData, key : string = 'fs') =
             }
             const file: File = {
                 name,
+                id: fileId,
                 links: [parrentId],
                 inode: inodeId
             }
@@ -162,6 +164,24 @@ export const createFileSystem = (data : Fs = defaultData, key : string = 'fs') =
                 inode: {...metadata.inode}
             }
         })
+    }
+
+    const listFiles = (dirId: Id):Map<string, Id> => {
+        const file = getFileById(dirId)
+        if (!isDirectory(file.inode)) throw new Error('File is not a directory')
+
+        const dir: Map<string, Id> = new Map()
+
+        let fileIds = parseDirectory(readFile(dirId))
+        let fileNames
+
+        for (let fileId of fileIds) {
+            const name = readMetadata(fileId).file.name
+
+            dir.set(name, fileId)
+        }
+
+        return dir
     }
 
     const parseDirectory = (data: string) => {
@@ -250,6 +270,7 @@ export const createFileSystem = (data : Fs = defaultData, key : string = 'fs') =
         updateFile,
         readFile,
         deleteFile,
-        readMetadata
+        readMetadata,
+        listFiles
     }
 }

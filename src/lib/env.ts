@@ -5,6 +5,7 @@ class env {
     public static store = storable('env')
     public user : string = 'system'
     public group : string = 'admin'
+    public path : string = '~'
 
     private constructor() {
 
@@ -12,7 +13,8 @@ class env {
             if (!value) {
                 return {
                     user: this.user,
-                    group: this.group
+                    group: this.group,
+                    path: this.path
                 }
             }
             else return value
